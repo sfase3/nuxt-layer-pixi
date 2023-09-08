@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const { myLayer } = useAppConfig()
 </script>
 
 <template>
