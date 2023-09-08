@@ -952,7 +952,7 @@
   resolved "https://registry.yarnpkg.com/@pixi/particle-container/-/particle-container-7.2.4.tgz#8f277f65e73b061d0859c7e526f5161f9b090242"
   integrity sha512-tpSzilZGFtAoi8XhzL0TecLPNRQAbY8nWV9XNGXJDw+nxXp18GCe8L6eEmnHLlAug67BRHl65DtrdvTknPX+4g==
 
-"@pixi/prepare@7.2.4":
+"@pixi/prepare@7.2.4", "@pixi/prepare@^7.2.4":
   version "7.2.4"
   resolved "https://registry.yarnpkg.com/@pixi/prepare/-/prepare-7.2.4.tgz#fd470bbc7dd90c4a8111989c405ffb5521850ff9"
   integrity sha512-Yff5Sh4kTLdKc5VkkM44LW9gpj7Izw8ns3P1TzWxqeGjzPZ3folr/tQujGL+Qw+8A9VESp+hX9MSIHyw+jpyrg==
@@ -3257,7 +3257,7 @@ nuxi@^3.7.3:
   optionalDependencies:
     fsevents "~2.3.3"
 
-nuxt@^3.6.2:
+nuxt@^3.0.0:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-3.7.1.tgz#a747b9f6dd61618ac35a9d939483c9895a528a46"
   integrity sha512-y8so6b11dDnuOkjqls3WZToyKODmHFaEYVB/RitjMrkNCez68qGDBFtG+VLaO34I2IdsbugTzByXktEk4dbs9w==
