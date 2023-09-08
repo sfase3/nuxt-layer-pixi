@@ -8,6 +8,7 @@
 </template>
 
 <script setup lang="ts">
+import * as PIXI from 'pixi.js';
 const container = ref<HTMLDivElement>();
 
 const ab = ref(0);
