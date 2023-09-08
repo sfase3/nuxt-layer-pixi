@@ -4,7 +4,9 @@
   "type": "module",
   "main": "./nuxt.config.ts",
   "dependencies": {
-    "pixi.js": "^7.2.4",
+    "pixi.js": "^7.2.4"
+  },
+  "devDependencies": {
     "nuxt": "^3.0.0"
   }
 }
