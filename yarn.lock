@@ -952,7 +952,7 @@
   resolved "https://registry.yarnpkg.com/@pixi/particle-container/-/particle-container-7.2.4.tgz#8f277f65e73b061d0859c7e526f5161f9b090242"
   integrity sha512-tpSzilZGFtAoi8XhzL0TecLPNRQAbY8nWV9XNGXJDw+nxXp18GCe8L6eEmnHLlAug67BRHl65DtrdvTknPX+4g==
 
-"@pixi/prepare@7.2.4", "@pixi/prepare@^7.2.4":
+"@pixi/prepare@7.2.4":
   version "7.2.4"
   resolved "https://registry.yarnpkg.com/@pixi/prepare/-/prepare-7.2.4.tgz#fd470bbc7dd90c4a8111989c405ffb5521850ff9"
   integrity sha512-Yff5Sh4kTLdKc5VkkM44LW9gpj7Izw8ns3P1TzWxqeGjzPZ3folr/tQujGL+Qw+8A9VESp+hX9MSIHyw+jpyrg==

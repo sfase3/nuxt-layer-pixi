@@ -1,9 +1,11 @@
 {
   "name": "bit-pixi-wheel",
-  "version": "1.0.10",
+  "version": "1.0.9",
   "type": "module",
   "main": "./nuxt.config.ts",
-  "dependencies": {},
+  "dependencies": {
+    "pixi.js": "^7.2.4"
+  },
   "devDependencies": {
     "nuxt": "^3.0.0"
   }
