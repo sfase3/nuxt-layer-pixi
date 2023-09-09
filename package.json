@@ -3,7 +3,15 @@
   "version": "1.2.1",
   "type": "module",
   "main": "./nuxt.config.ts",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "start": "node .output/server/index.mjs"
+  },
   "dependencies": {
+    "gsap": "^3.11.3",
     "pixi.js": "^7.2.4"
   },
   "devDependencies": {

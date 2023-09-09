@@ -1,27 +1,36 @@
 <template>
   <div>
   <div ref="container">
-      hello
   </div>
-  <button @click="ab++" >+</button>
-  <button @click="ab--">-</button>
-  <div>{{ ab }}</div>
+  
+  <div>{{ position }}</div>
+  <button @click="resizer">resize</button>
 </div>
 </template>
 
 <script setup lang="ts">
 import * as PIXI from 'pixi.js';
-const container = ref<HTMLDivElement>();
+import gsap from 'gsap';
 
-const ab = ref(0);
+const props = defineProps<{
+  position: number;
+  list: any[];
+}>();
+
+const container = shallowRef<HTMLDivElement>();
+const running = shallowRef(false);
+const reels = shallowRef<any>([]);
+const SYMBOL_SIZE = 100;
+const STAT_WIDTH = 857;  
+
 const app = new PIXI.Application({ 
-  background: 0xff0000,
-  width: 900, 
-  height: 100, 
+  background: 0x181d29,
+  width: 897, 
+  height: 120, 
   antialias: true, 
   resolution: window.devicePixelRatio || 1, 
   autoDensity: true,
-
+  powerPreference: 'high-performance'
 });
 
 const style = new PIXI.TextStyle({
@@ -39,25 +48,30 @@ const style = new PIXI.TextStyle({
       dropShadowDistance: 6,
       wordWrap: true,
       wordWrapWidth: 440,
-  });
-const rc = new PIXI.Container();
-Promise.resolve().then(onAssetsLoaded);
+});
 
-const SYMBOL_SIZE = 100;
+const rc = new PIXI.Container();
+
+PIXI.Assets.load([
+    '/images/yellow.svg',
+    '/images/red.svg',
+    '/images/blue.svg',
+    '/images/green.svg',
+    '/images/violet.svg'
+]).then(onAssetsLoaded);
 
 async function onAssetsLoaded() {
-  const reels = [];
+  
   const reelContainer = new PIXI.Container();
+  const brushsprite = await PIXI.Sprite.from('/images/maska.jpeg');
 
-const brushsprite = await PIXI.Sprite.from('https://raw.githubusercontent.com/sfase3/nuxt-layers-vanya/main/components/maska.jpeg');
-  brushsprite.width = 900;
+  brushsprite.width = STAT_WIDTH;
   reelContainer.addChild(brushsprite);
   reelContainer.mask = brushsprite;
 
-  const gradientTexture = await PIXI.Texture.from('https://raw.githubusercontent.com/sfase3/nuxt-layers-vanya/main/components/Group.svg');
-
   for (let i = 0; i < 1; i++) {
-      rc.x = 100;
+      rc.x = 0;
+      rc.y = 60;
       reelContainer.addChild(rc);
     
       const reel = {
@@ -67,72 +81,38 @@ const brushsprite = await PIXI.Sprite.from('https://raw.githubusercontent.com/sf
           previousPosition: 0
       };
       for (let j = 0; j < 10; j++) {
+        const gradientTexture = await PIXI.Texture.from(`/images/${props.list[j].color}1.svg`, {
+            resourceOptions: {
+            scale: 15
+            },
+            resolution: 15,
+        });
           const symbol = new PIXI.Sprite(gradientTexture);
-          
-          const text = new PIXI.Text(`${j}`, style); 
-          text.anchor.set(0.5); 
-          text.position.set(93 / 2, 91 / 2);
+          symbol.anchor.set(0.5);
+          //${props.list[j].text}
+          const text = new PIXI.Text(`${props.list[j].text}`, style); 
+        //   text.anchor.set(0.5); 
+        
+          text.position.set(120 / 2, 91 / 2);
 
           const symbolContainer = new PIXI.Graphics();
           symbolContainer.beginFill(0, 1);
     
           symbolContainer.addChild(symbol, text);
-      
+         
           reel.symbols.push(symbolContainer); 
           rc.addChild(symbolContainer); 
       }
-      reels.push(reel);   
+      reels.value.push(reel);   
   }
   app.stage.addChild(reelContainer);
 
-  const margin = (app.screen.height - SYMBOL_SIZE * 1) / 1;
-
-  reelContainer.y = margin;
+//   reelContainer.y = 14.5;
   reelContainer.x = 3.5;
 
-  const bottom = new PIXI.Graphics();
-
-  const playText = new PIXI.Text('Spin the wheels!', style);
-
-  playText.x = Math.round((bottom.width - playText.width) / 4);
-  playText.y = app.screen.height - margin + Math.round((margin - playText.height) / 2);
-  bottom.addChild(playText);
-
-  app.stage.addChild(bottom);
-
-  bottom.interactive = true;
-  bottom.buttonMode = true;
-
-  bottom.on('pointerdown', () => {
-      startPlay();
-  });
-
-  let running = false;
-
-  function startPlay() {
-      reels[0].position = 0;
-      // reels[0].previousPosition = 0;
-      if (running) return;
-      running = true;
-
-      for (let i = 0; i < reels.length; i++) {
-          const r = reels[i];
-         
-          const extra = Math.floor(Math.random() * 3);
-          const target = r.position + 10 + i * 5 + extra;
-          const time = 2500 + i * 600 + extra * 600;
-
-          tweenTo(r, 'position', ab.value, time, backout(1), null, i === reels.length - 1 ? reelsComplete : null);
-      }
-  }
-
-  function reelsComplete() {
-      running = false;
-  }
-
   app.ticker.add((delta) => {
-      for (let i = 0; i < reels.length; i++) {
-          const r = reels[i];
+      for (let i = 0; i < reels.value.length; i++) {
+          const r = reels.value[i];
           r.previousPosition = r.position;
 
           for (let j = 0; j < r.symbols.length; j++) {
@@ -157,9 +137,9 @@ function tweenTo(object, property, target, time, easing, onchange, oncomplete) {
       complete: oncomplete,
       start: Date.now(),
   };
-
   tweening.push(tween);
-
+//   reels.value[target-20].scale.x = 1.1;
+//   reels.value[target-20].scale.y = 1.1;
   return tween;
 }
 
@@ -188,17 +168,54 @@ const lerp = (a1, a2, t) => a1 * (1 - t) + a2 * t;
 
 const backout = (amount) => (t) => (--t * t * ((amount + 1) * t + amount) + 1);
 
+const reelsComplete = () => running.value = false;
+
+const startPlay = () => {
+      reels.value[0].position = 0;
+      reels.value[0].previousPosition = 0;
+      if (running.value) return;
+      running.value = true;
+
+      for (let i = 0; i < reels.value.length; i++) {
+        const r = reels.value[i]; 
+        const extra = Math.floor(Math.random() * 3);
+        const time = 2500 + i * 600 + extra * 600;
+        setTimeout(() => {
+            // sprite.style.transformOrigin = 'center center';
+       
+            // rc.children[props.position - 21].style.transform = 'scale(1)';
+            gsap.to(rc.children[props.position - 21].scale, {
+                x: 1.1, 
+                y: 1.1, 
+                duration: 1,
+                ease: 'none'
+            })            
+        }, time)
+        tweenTo(r, 'position', props.position, time, backout(1), null, i === reels.value.length - 1 ? reelsComplete : null);
+    }
+};
+
+const resizer = () => {
+    const width = document.body.clientWidth as number;
+    // console.log(width)
+    if (width < STAT_WIDTH) {
+        // console.log(1)
+        rc.x = (93 / 2) - ((897 - width) / 2);
+        app.renderer.resize(width, 120);
+    } else {
+        // console.log(2)
+        rc.x = 0;
+        app.renderer.resize(STAT_WIDTH, 120);
+    }
+};
+
+watch(() => props.position, () => startPlay());
+
 onMounted(() => {
   container.value.appendChild(app.view);
-  window.addEventListener('resize', () => {
-      const width = container.value.clientWidth as number;
-      if (width < 900) {
-          rc.x = 100 - ((900 - width) / 2);
-          app.renderer.resize(width, 100);
-      } else {
-          rc.x = 100;
-          app.renderer.resize(900, 100);
-      }
-  });
+  window.addEventListener('resize', resizer);
+  resizer()
 });
+
+onUnmounted(() => removeEventListener('resize', resizer));
 </script>
