@@ -25,7 +25,7 @@ const STAT_WIDTH = 857;
 
 const app = new PIXI.Application({ 
   background: 0x181d29,
-  width: 897, 
+  width: STAT_WIDTH, 
   height: 120, 
   antialias: true, 
   resolution: window.devicePixelRatio || 1, 
@@ -197,15 +197,12 @@ const startPlay = () => {
 
 const resizer = () => {
     const width = document.body.clientWidth as number;
-    // console.log(width)
     if (width < STAT_WIDTH) {
-        // console.log(1)
         rc.x = (93 / 2) - ((897 - width) / 2);
         app.renderer.resize(width, 120);
     } else {
-        // console.log(2)
         rc.x = 0;
-        app.renderer.resize(STAT_WIDTH, 120);
+        app.renderer.resize(817, 120);
     }
 };
 
