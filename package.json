@@ -1,6 +1,6 @@
 {
   "name": "bit-pixi-wheel",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "type": "module",
   "main": "./nuxt.config.ts",
   "scripts": {
