@@ -39,7 +39,7 @@ export const style = new PIXI.TextStyle({
     fontSize: 24,
     // fontStyle: 'italic',
     fontWeight: 'bold',
-    fill: '#ff0000',
+    fill: '#EAF2FF',
     stroke: '#EAF2FF',
     strokeThickness: 0,
     dropShadow: true,

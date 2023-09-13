@@ -44,13 +44,18 @@ PIXI.Assets.load([
     '/images/red.svg',
     '/images/blue.svg',
     '/images/green.svg',
-    '/images/violet.svg'
+    '/images/violet.svg',
+    '/images/bronze.svg',
+    '/images/dark-red.svg',
+    '/images/gold.svg',
+    '/images/purple.svg',
+    '/images/silver.svg'
 ]).then(onAssetsLoaded);
 
 async function onAssetsLoaded() {
   
   const reelContainer = new PIXI.Container();
-  const brushsprite = await PIXI.Sprite.from('/images/maska.jpeg');
+  const brushsprite = await PIXI.Sprite.from('/wheel/maska.jpeg');
 
   brushsprite.width = STAT_WIDTH;
   reelContainer.addChild(brushsprite);
@@ -69,7 +74,7 @@ async function onAssetsLoaded() {
      
   for (let j = 0; j < props.list.length; j++) {
 
-    const gradientTexture = await PIXI.Texture.from(`/images/${props.list[j].color}.svg`, {
+    const gradientTexture = await PIXI.Texture.from(`/wheel/${props.list[j].color}.svg`, {
       resourceOptions: {
         scale: 15
       },
@@ -87,8 +92,8 @@ async function onAssetsLoaded() {
     symbolContainer.beginFill(0, 1);
     symbolContainer.arrowColor = props.list[j].arrows;
     symbolContainer.reelId = props.list[j].id;
-    symbolContainer.reelPos = 25 - j;
-    
+    symbolContainer.reelPos = props.list[j].position;
+
     symbolContainer.addChild(symbol, text);
 
     reel.symbols.push(symbolContainer); 
@@ -139,7 +144,8 @@ const startPlay = () => {
     running.value = true;
     const time = moveReels(reels, tweening, rc, running, props.position);
     setTimeout(() => {
-        const target = rc.children.findIndex(e => e.reelPos === props.position)
+        const target = rc.children.find(e => e.reelPos === props.position + 2)
+        console.log(target)
         gsap.to(target.scale, {
             x: 1.1, 
             y: 1.1, 
@@ -148,14 +154,14 @@ const startPlay = () => {
         });
         arrowColor.value = target.arrowColor;   
         emit('stop');      
-    }, time + 1000)
+    }, time)
   };
 };
 
 const handleResize = () => resizer(app, rc)
 
 watch(() => props.spin, (spin) => spin && startPlay());
-watch(() => props.list, (list) => rc.children.forEach((reel, idx) => (reel.children[1] as PIXI.Text).text = list[idx].text));
+watch(() => props.list, (list) => rc.children.forEach((reel, idx) => (reel.children[1] as PIXI.Text).text = list[idx].price));
 
 onMounted(() => {
   container.value.appendChild(app.view);
