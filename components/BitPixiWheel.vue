@@ -87,7 +87,7 @@ async function onAssetsLoaded() {
     symbol.anchor.set(0.5);
 
     const displayText = getDisplayText(props.list[j].price)
-    const displayStyle = style;
+    const displayStyle = Object.create(style);
     displayStyle.dropShadowColor = props.list[j].arrows;
 
     const text = new PIXI.Text(displayText, displayStyle ); 
