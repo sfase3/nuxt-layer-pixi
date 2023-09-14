@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap';
-import { STAT_WIDTH, SYMBOL_SIZE, lerp, resizer, style, moveReels, resetReels } from '../utils/helpers'
+import { STAT_WIDTH, SYMBOL_SIZE, lerp, resizer, style, moveReels, resetReels, getDisplayText } from '../utils/helpers'
 
 const props = defineProps<{
   position: number;
@@ -26,6 +26,7 @@ const running = shallowRef(props.spin);
 const arrowColor = shallowRef('#878B94');
 const reels = shallowRef<any>([]);
 const tweening = shallowRef([]);
+const brushsprite = shallowRef<PIXI.Sprite>();
 
 const app = new PIXI.Application({ 
   background: 0x181d29,
@@ -39,27 +40,28 @@ const app = new PIXI.Application({
 
 const rc = new PIXI.Container();
 
-PIXI.Assets.load([
-    '/images/yellow.svg',
-    '/images/red.svg',
-    '/images/blue.svg',
-    '/images/green.svg',
-    '/images/violet.svg',
-    '/images/bronze.svg',
-    '/images/dark-red.svg',
-    '/images/gold.svg',
-    '/images/purple.svg',
-    '/images/silver.svg'
+await PIXI.Assets.load([
+    '/wheel/yellow.svg',
+    '/wheel/red.svg',
+    '/wheel/blue.svg',
+    '/wheel/green.svg',
+    '/wheel/violet.svg',
+    '/wheel/bronze.svg',
+    '/wheel/dark-red.svg',
+    '/wheel/gold.svg',
+    '/wheel/purple.svg',
+    '/wheel/silver.svg'
 ]).then(onAssetsLoaded);
 
 async function onAssetsLoaded() {
-  
   const reelContainer = new PIXI.Container();
-  const brushsprite = await PIXI.Sprite.from('/wheel/maska.jpeg');
 
-  brushsprite.width = STAT_WIDTH;
-  reelContainer.addChild(brushsprite);
-  reelContainer.mask = brushsprite;
+  brushsprite.value = await PIXI.Sprite.from('/wheel/maska.png');
+
+  brushsprite.value.width = 900;
+
+  reelContainer.mask = brushsprite.value;
+  reelContainer.addChild(brushsprite.value);
 
   rc.x = 50.5;
   rc.y = 65;
@@ -76,15 +78,19 @@ async function onAssetsLoaded() {
 
     const gradientTexture = await PIXI.Texture.from(`/wheel/${props.list[j].color}.svg`, {
       resourceOptions: {
-        scale: 15
+        scale: 20
       },
-      resolution: 15,
+      resolution: 20,
     });
 
     const symbol = new PIXI.Sprite(gradientTexture);
     symbol.anchor.set(0.5);
-         
-    const text = new PIXI.Text(`${props.list[j].price}`, style); 
+
+    const displayText = getDisplayText(props.list[j].price)
+    const displayStyle = style;
+    displayStyle.dropShadowColor = props.list[j].arrows;
+
+    const text = new PIXI.Text(displayText, displayStyle ); 
     text.position.set(0, -1.5);
     text.anchor.set(0.5)
 
@@ -142,31 +148,35 @@ const startPlay = () => {
   resetReels(reels, arrowColor, rc);
   if (!running.value) {
     running.value = true;
-    const time = moveReels(reels, tweening, rc, running, props.position);
+    const time = moveReels(reels, tweening, running, props.position);
     setTimeout(() => {
         const target = rc.children.find(e => e.reelPos === props.position + 2)
-        console.log(target)
         gsap.to(target.scale, {
             x: 1.1, 
             y: 1.1, 
             duration: 1,
             ease: 'none'
         });
+
         arrowColor.value = target.arrowColor;   
         emit('stop');      
     }, time)
   };
 };
 
-const handleResize = () => resizer(app, rc)
+const handleResize = () => resizer(app, rc, brushsprite)
 
 watch(() => props.spin, (spin) => spin && startPlay());
-watch(() => props.list, (list) => rc.children.forEach((reel, idx) => (reel.children[1] as PIXI.Text).text = list[idx].price));
+watch(() => props.list, (list) => rc.children.forEach((reel, idx) => {
+  (reel.children[1] as PIXI.Text).text = list[idx].price;
+  (reel.children[0] as PIXI.Text).texture = PIXI.Texture.from(`/wheel/${list[idx].color}.svg`)
+  reel.arrowColor = list[idx].arrows;
+}));
 
 onMounted(() => {
   container.value.appendChild(app.view);
   addEventListener('resize', handleResize);
-  resizer(app, rc)
+  handleResize();
 });
 
 onUnmounted(() => removeEventListener('resize', handleResize));

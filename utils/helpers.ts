@@ -8,13 +8,15 @@ export const lerp = (a1, a2, t) => a1 * (1 - t) + a2 * t;
 
 export const backout = (amount) => (t) => (--t * t * ((amount + 1) * t + amount) + 1);
 
-export const resizer = (app: PIXI.Application<PIXI.ICanvas>, rc: PIXI.Container) => {
+export const resizer = async (app: PIXI.Application<PIXI.ICanvas>, rc: PIXI.Container, mask: Ref<PIXI.Sprite>) => {
     const width = document.body.clientWidth as number;
     if (width < STAT_WIDTH) {
+        mask.value.width = width;
         rc.x = (93 / 2) - ((893.5 - width) / 2);
         app.renderer.resize(width, 130);
     } else {
         rc.x = 50.5;
+        mask.value.width = STAT_WIDTH;
         app.renderer.resize(STAT_WIDTH, 130);
     }
 };
@@ -43,15 +45,13 @@ export const style = new PIXI.TextStyle({
     stroke: '#EAF2FF',
     strokeThickness: 0,
     dropShadow: true,
-    dropShadowColor: '#000000',
-    dropShadowBlur: 1,
+    // dropShadowColor: '#A65F00',
+    dropShadowBlur: 0,
     dropShadowAngle: Math.PI / 2,
-    dropShadowDistance: 1,
-    wordWrap: true,
-    wordWrapWidth: 440,
+    dropShadowDistance: 3,
   });
 
-export const moveReels = (reels: Ref<unknown[]>, tweening: Ref<unknown[]>, rc: PIXI.Container, running: Ref<boolean>, position: number) => {
+export const moveReels = (reels: Ref<unknown[]>, tweening: Ref<unknown[]>, running: Ref<boolean>, position: number) => {
     for (let i = 0; i < reels.value.length; i++) {
     const r = reels.value[i]; 
     const extra = Math.floor(Math.random() * 3);
@@ -74,3 +74,41 @@ export const resetReels = (reels: Ref<unknown[]>, arrowColor: Ref<string>, rc: P
         })
     arrowColor.value = '#878B94';
 };
+
+export const getDisplayText = (
+    animatedNum: number
+  ) => {
+    const integerPart = Math.floor(animatedNum);
+    const stringLength = integerPart.toString().length;
+    let divisor;
+    let suffix;
+    switch (true) {
+      case (stringLength >= 10):
+        divisor = 1_000_000_000;
+        suffix = 'B';
+        break;
+      case (stringLength >= 7):
+        divisor = 1_000_000;
+        suffix = 'M';
+        break;
+      case (stringLength >= 4):
+        divisor = 1_000;
+        suffix = 'K';
+        break;
+      case (stringLength >= 3):
+        divisor = 0;
+        suffix = '';
+        break;
+      default:
+        divisor = 1;
+        suffix = '';
+    }
+
+    const displayedValue = (animatedNum / divisor);
+    if (divisor === 1) {
+      return stringLength === 1 ? animatedNum.toString() : `${animatedNum.toString().slice(0, -stringLength + 1)}`;
+    } else if (divisor === 0) {
+        return animatedNum.toString();
+    }
+    return `${displayedValue}${suffix}`;
+  };
