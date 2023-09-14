@@ -48,7 +48,7 @@ export const style = new PIXI.TextStyle({
     // dropShadowColor: '#A65F00',
     dropShadowBlur: 0,
     dropShadowAngle: Math.PI / 2,
-    dropShadowDistance: 3,
+    dropShadowDistance: 2,
   });
 
 export const moveReels = (reels: Ref<unknown[]>, tweening: Ref<unknown[]>, running: Ref<boolean>, position: number) => {
@@ -65,50 +65,12 @@ export const moveReels = (reels: Ref<unknown[]>, tweening: Ref<unknown[]>, runni
 
 const reelsComplete = (running: Ref<boolean>) => running.value = false;
 
-export const resetReels = (reels: Ref<unknown[]>, arrowColor: Ref<string>, rc: PIXI.Container | undefined) => {
+export const resetReels = async (reels: Ref<unknown[]>, arrowColor: Ref<string>, rc: PIXI.Container | undefined) => {
     reels.value[0].position = 0;
     reels.value[0].previousPosition = 0;
-        rc.children.forEach(reel => {
-            reel.scale.x = 1;
-            reel.scale.y = 1;
-        })
+    await rc.children.forEach(reel => {
+        reel.scale.x = 1;
+        reel.scale.y = 1;
+    })
     arrowColor.value = '#878B94';
 };
-
-export const getDisplayText = (
-    animatedNum: number
-  ) => {
-    const integerPart = Math.floor(animatedNum);
-    const stringLength = integerPart.toString().length;
-    let divisor;
-    let suffix;
-    switch (true) {
-      case (stringLength >= 10):
-        divisor = 1_000_000_000;
-        suffix = 'B';
-        break;
-      case (stringLength >= 7):
-        divisor = 1_000_000;
-        suffix = 'M';
-        break;
-      case (stringLength >= 4):
-        divisor = 1_000;
-        suffix = 'K';
-        break;
-      case (stringLength >= 3):
-        divisor = 0;
-        suffix = '';
-        break;
-      default:
-        divisor = 1;
-        suffix = '';
-    }
-
-    const displayedValue = (animatedNum / divisor);
-    if (divisor === 1) {
-      return stringLength === 1 ? animatedNum.toString() : `${animatedNum.toString().slice(0, -stringLength + 1)}`;
-    } else if (divisor === 0) {
-        return animatedNum.toString();
-    }
-    return `${displayedValue}${suffix}`;
-  };

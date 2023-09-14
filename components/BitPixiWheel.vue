@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap';
-import { STAT_WIDTH, SYMBOL_SIZE, lerp, resizer, style, moveReels, resetReels, getDisplayText } from '../utils/helpers'
+import { STAT_WIDTH, SYMBOL_SIZE, lerp, resizer, style, moveReels, resetReels } from '../utils/helpers'
 
 const props = defineProps<{
   position: number;
@@ -37,8 +37,9 @@ const app = new PIXI.Application({
   autoDensity: true,
   powerPreference: 'high-performance'
 });
-
 const rc = new PIXI.Container();
+
+const handleResize = () => resizer(app, rc, brushsprite)
 
 await PIXI.Assets.load([
     '/wheel/yellow.svg',
@@ -86,9 +87,9 @@ async function onAssetsLoaded() {
     const symbol = new PIXI.Sprite(gradientTexture);
     symbol.anchor.set(0.5);
 
-    const displayText = getDisplayText(props.list[j].price)
+    const displayText = props.list[j].price;
     const displayStyle = Object.create(style);
-    displayStyle.dropShadowColor = props.list[j].arrows;
+    displayStyle.dropShadowColor = props.list[j].shadowColor;
 
     const text = new PIXI.Text(displayText, displayStyle ); 
     text.position.set(0, -1.5);
@@ -144,8 +145,8 @@ app.ticker.add(() => {
   }
 });
 
-const startPlay = () => {
-  resetReels(reels, arrowColor, rc);
+const startPlay = async () => {
+  await resetReels(reels, arrowColor, rc);
   if (!running.value) {
     running.value = true;
     const time = moveReels(reels, tweening, running, props.position);
@@ -164,12 +165,18 @@ const startPlay = () => {
   };
 };
 
-const handleResize = () => resizer(app, rc, brushsprite)
-
 watch(() => props.spin, (spin) => spin && startPlay());
+
 watch(() => props.list, (list) => rc.children.forEach((reel, idx) => {
-  (reel.children[1] as PIXI.Text).text = list[idx].price;
-  (reel.children[0] as PIXI.Text).texture = PIXI.Texture.from(`/wheel/${list[idx].color}.svg`)
+  const displayText = reel.children[1] as PIXI.Text;
+  const displayTexture = reel.children[0] as PIXI.Text;
+
+  const newStyle = Object.create(style);
+  newStyle.dropShadowColor = props.list[idx].shadowColor;
+
+  displayText.text = list[idx].price;
+  displayText.style = newStyle;
+  displayTexture.texture = PIXI.Texture.from(`/wheel/${list[idx].color}.svg`);
   reel.arrowColor = list[idx].arrows;
 }));
 
@@ -179,5 +186,8 @@ onMounted(() => {
   handleResize();
 });
 
-onUnmounted(() => removeEventListener('resize', handleResize));
+onBeforeUnmount(() => {
+  app.destroy(true);
+  removeEventListener('resize', handleResize)
+})
 </script>
