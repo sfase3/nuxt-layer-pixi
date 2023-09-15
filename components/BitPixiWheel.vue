@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap';
-import { STAT_WIDTH, SYMBOL_SIZE, lerp, resizer, style, moveReels, resetReels } from '../utils/helpers'
+import { STAT_WIDTH, SYMBOL_SIZE, lerp, resizer, style, moveReels, resetReels, getDisplayText } from '../utils/helpers'
 
 const props = defineProps<{
   position: number;

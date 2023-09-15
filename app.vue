@@ -24,7 +24,7 @@ const list = ref([
     { "position": 25, "price": 150, "multiplier": 1.5, "color": "yellow", "arrows": "#FF7236", "shadowColor": '#FF7236' },  
     { "position": 25, "price": 150, "multiplier": 1.5, "color": "yellow", "arrows": "#FF7236", "shadowColor": '#FF7236' }, 
     { "position": 25, "price": 150, "multiplier": 1.5, "color": "yellow", "arrows": "#FF7236", "shadowColor": '#FF7236' }, 
-    { "position": 25, "price": 15, "multiplier": 1.5, "color": "yellow", "arrows": "#FF7236", "shadowColor": '#FF7236' }, 
+    { "position": 25, "price": 15, "multiplier": 1.5, "color": "dark-red", "arrows": "#FF7236", "shadowColor": '#FF7236' }, 
 ])
 
 
