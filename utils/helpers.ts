@@ -57,7 +57,7 @@ export const moveReels = (reels: Ref<unknown[]>, tweening: Ref<unknown[]>, runni
     const extra = Math.floor(Math.random() * 3);
     const time = 2500 + i * 600 + extra * 600;
     
-    const tween = tweenTo(r, 'position', position, time, backout(1), null, i === reels.value.length - 1 ? reelsComplete(running) : null);
+    const tween = tweenTo(r, 'position', position, time, backout(0.5), null, i === reels.value.length - 1 ? reelsComplete(running) : null);
     tweening.value.push(tween);
     return time;
 }
@@ -66,6 +66,7 @@ export const moveReels = (reels: Ref<unknown[]>, tweening: Ref<unknown[]>, runni
 const reelsComplete = (running: Ref<boolean>) => running.value = false;
 
 export const resetReels = async (reels: Ref<unknown[]>, arrowColor: Ref<string>, rc: PIXI.Container | undefined) => {
+    rc.children.forEach(reel => reel.filters = []);
     reels.value[0].position = 0;
     reels.value[0].previousPosition = 0;
     await rc.children.forEach(reel => {
