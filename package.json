@@ -1,6 +1,6 @@
 {
   "name": "bit-pixi-wheel",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "type": "module",
   "main": "./nuxt.config.ts",
   "scripts": {
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.8.0",
+    "@pixi/filter-glow": "^5.2.1",
     "gsap": "^3.11.3",
     "pixi.js": "^7.2.4"
   },
