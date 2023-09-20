@@ -28,7 +28,6 @@
 </template>
 
 <script lang="ts" setup>
-
 interface Arrow {
     rotate?: boolean;
     color?: string;
